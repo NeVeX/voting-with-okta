@@ -29,7 +29,7 @@ public class OktaUserArgumentResolver implements HandlerMethodArgumentResolver {
         if ( oktaUserOpt.isPresent()) {
             return oktaUserOpt.get();
         } else {
-            throw new AuthenticationServiceException("The request is not authenticated with an expected user");
+            throw new AuthenticationServiceException("The request is not authenticated with a user");
         }
 
     }

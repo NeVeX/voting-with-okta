@@ -14,6 +14,8 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.security.oauth:spring-security-oauth2')
     compile('org.springframework.boot:spring-boot-starter-security')
+    compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+
 //    compile("com.okta.spring:okta-spring-boot-starter:0.2.0") # This is bollocks
 }
 

@@ -2,6 +2,7 @@ package com.nevex.config;
 
 import com.nevex.filter.OktaAuthenticatedUserExtractorFilter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 /**
  * Created by Mark Cunningham on 11/9/2017.
  */
+@EnableOAuth2Sso
 @Configuration
 public class VotingWebSecurityConfiguration /*extends WebSecurityConfigurerAdapter*/ {
 

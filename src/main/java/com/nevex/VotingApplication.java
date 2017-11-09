@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 /**
  * Created by Mark Cunningham on 11/8/2017.
  */
-@EnableOAuth2Sso
+
 @SpringBootApplication
 public class VotingApplication {
 

@@ -32,10 +32,20 @@ security:
     enabled: false
   filter-order: 5
 
+server:
+  context-path: /
+  port: 8080
+
+
 #logging:
 #  level:
 #    org.springframework: DEBUG
 
-
+spring:
+  thymeleaf:
+    cache: false
+    prefix: classpath:/static/
+    mode: HTML5
+    suffix: .html
 
 
