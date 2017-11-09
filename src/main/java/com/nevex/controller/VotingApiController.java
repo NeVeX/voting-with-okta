@@ -10,12 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 
-import java.util.Set;
-
-import static com.nevex.controller.ResponseUtils.to404;
-import static com.nevex.controller.ResponseUtils.toViewName;
 
 /**
  * Created by Mark Cunningham on 11/8/2017.
@@ -30,11 +25,6 @@ public class VotingApiController {
     @Autowired
     public VotingApiController(VotingService votingService) {
         this.votingService = votingService;
-    }
-
-    @GetMapping(value = "/instances", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Set<String>> getAllVotingInstances() {
-        return ResponseEntity.ok(votingService.getAllInstances());
     }
 
     @GetMapping(path = "/{"+VOTING_RESOURCE+"}", produces = MediaType.APPLICATION_JSON_VALUE)

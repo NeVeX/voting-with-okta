@@ -14,8 +14,8 @@ class ResponseUtils {
         return ResponseEntity.status(404).body(new ErrorDto("404", "That does not exist"));
     }
 
-    static ModelAndView toViewName(String viewName) {
-        return new ModelAndView(viewName);
-    }
+//    static ModelAndView toViewName(String viewName) {
+//        return new ModelAndView(viewName);
+//    }
 
 }

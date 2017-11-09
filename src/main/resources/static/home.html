@@ -1,6 +1,6 @@
 <!doctype html>
 
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8"></meta>
 
@@ -17,7 +17,6 @@
 
 <body class="wrapper" style="background: #303030;">
 
-
 <div class="wrapper style4" >
     <article id="contact" >
         <header>
@@ -26,17 +25,20 @@
         <div>
             <div class="row">
                 <div class="12u">
-                    <form method="get" action="/">
-                        <div>
-                            <div class="row 200%">
-                                <div class="12u">
-                                    <ul class="actions">
-                                        <li><button type="submit" value="ux-hackathon">UX Hackathon</button></li>
-                                    </ul>
-                                </div>
+                    <div>
+                        <div class="row 200%">
+                            <div class="12u">
+                                <ul class="actions">
+                                    <li th:each=" instance : ${instances}">
+                                        <button
+                                                th:onclick="'window.location.href = \'' + @{/{votingId}(votingId=${instance.votingId})} + '\''"
+                                                th:text="${instance.name}">Test</button>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
-                    </form>
+                    </div>
+
                 </div>
             </div>
         </div>
