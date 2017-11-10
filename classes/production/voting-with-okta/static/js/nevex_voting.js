@@ -4,15 +4,14 @@ function onVoteButtonClicked(element) {
 
     var voteSubmitElement = $(element);
     var teamId = voteSubmitElement.attr('data-teamId');
-    var resourceName = voteSubmitElement.attr('data-resourceName');
     var voteType = voteSubmitElement.attr('data-vote-type');
     console.log("Voting for Team ["+teamId+"] for vote-type ["+voteType+"]");
 
-    placeVote(resourceName, teamId, voteType);
+    placeVote(teamId, voteType);
 }
 
 
-function placeVote(resourceName, teamId, voteType) {
+function placeVote(teamId, voteType) {
 
     var scope = this;
 
@@ -24,7 +23,7 @@ function placeVote(resourceName, teamId, voteType) {
 
     $.ajax({
         type: "POST",
-        url: "api/"+resourceName+"/"+teamId+"/votes",
+        url: "api/"+teamId+"/votes",
         headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": csrfToken },
         data: JSON.stringify( scope.voteRequest  ),
         success: function(data) {

@@ -36,6 +36,7 @@ server:
   context-path: /
   port: 8080
 
+# Hibernate
 
 #logging:
 #  level:
@@ -47,5 +48,12 @@ spring:
     prefix: classpath:/static/
     mode: HTML5
     suffix: .html
+  datasource:
+    url: jdbc:hsqldb:file:database/voting
+    username: sa
+  jpa:
+    show-sql: false
+    hibernate.ddl-auto: update
+
 
 

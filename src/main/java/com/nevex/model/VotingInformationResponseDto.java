@@ -2,10 +2,8 @@ package com.nevex.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
+import com.nevex.dao.entity.VotingInstanceInformationEntity;
 
-import javax.validation.constraints.Max;
 import java.util.Objects;
 import java.util.Set;
 
@@ -20,13 +18,18 @@ public final class VotingInformationResponseDto extends VotingInformationRequest
 
     @JsonCreator
     public VotingInformationResponseDto(@JsonProperty(value = TEAM_ID, required = true) int teamId,
-                                        @JsonProperty(value = VOTING_ID, required = true) String votingId,
+                                        @JsonProperty(value = VOTING_RESOURCE, required = true) String votingResource,
                                         @JsonProperty(value = TEAM_NAME, required = true) String teamName,
                                         @JsonProperty(value = SHORT_DESCRIPTION, required = true) String shortDescription,
                                         @JsonProperty(value = LONG_DESCRIPTION, required = true) String longDescription,
                                         @JsonProperty(value = TEAM_MEMBERS, required = true) Set<PersonDto> teamMembers) {
-        super(votingId, teamName, shortDescription, longDescription, teamMembers);
+        super(votingResource, teamName, shortDescription, longDescription, teamMembers);
         this.teamId = teamId;
+    }
+
+    public VotingInformationResponseDto(VotingInstanceInformationEntity votingInfo, String votingResource, Set<PersonDto> teamMembers) {
+        this(votingInfo.getId(), votingResource, votingInfo.getTeamName(), votingInfo.getShortDescription(), votingInfo.getLongDescription(), teamMembers);
+
     }
 
     public int getTeamId() {

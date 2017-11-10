@@ -13,15 +13,15 @@ import java.util.Set;
  */
 public class VotingInformationRequestDto {
 
-    final String VOTING_ID = "voting_id";
+    final String VOTING_RESOURCE = "voting_resource";
     final String TEAM_NAME = "team_name";
     final String SHORT_DESCRIPTION = "short_description";
     final String LONG_DESCRIPTION = "long_description";
     final String TEAM_MEMBERS = "team_members";
 
     @NotBlank
-    @JsonProperty(VOTING_ID)
-    private final String votingId;
+    @JsonProperty(VOTING_RESOURCE)
+    private final String votingResource;
     @NotBlank
     @Max(value = 30)
     @JsonProperty(TEAM_NAME)
@@ -40,20 +40,20 @@ public class VotingInformationRequestDto {
 
     @JsonCreator
     public VotingInformationRequestDto(
-            @JsonProperty(value = VOTING_ID, required = true) String votingId,
+            @JsonProperty(value = VOTING_RESOURCE, required = true) String votingResource,
             @JsonProperty(value = TEAM_NAME, required = true) String teamName,
             @JsonProperty(value = SHORT_DESCRIPTION, required = true) String shortDescription,
             @JsonProperty(value = LONG_DESCRIPTION, required = true) String longDescription,
             @JsonProperty(value = TEAM_MEMBERS, required = true) Set<PersonDto> teamMembers) {
-        this.votingId = votingId;
+        this.votingResource = votingResource;
         this.teamName = teamName;
         this.shortDescription = shortDescription;
         this.longDescription = longDescription;
         this.teamMembers = teamMembers;
     }
 
-    public String getVotingId() {
-        return votingId;
+    public String getVotingResource() {
+        return votingResource;
     }
 
     public String getTeamName() {

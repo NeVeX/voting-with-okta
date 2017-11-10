@@ -1,14 +1,23 @@
 package com.nevex.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nevex.dao.VoteRepository;
+import com.nevex.dao.VotingInstanceInformationRepository;
+import com.nevex.dao.VotingInstancesRepository;
+import com.nevex.dao.entity.VoteEntity;
+import com.nevex.dao.entity.VotingInstanceEntity;
+import com.nevex.dao.entity.VotingInstanceInformationEntity;
 import com.nevex.model.PersonDto;
-import com.nevex.model.VotingInformationRequestDto;
+import com.nevex.model.VoteRequestDto;
 import com.nevex.model.VotingInformationResponseDto;
 import com.nevex.model.VotingInstancesDto;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -18,11 +27,84 @@ import java.util.stream.IntStream;
  */
 public class VotingService {
 
-    private final Set<VotingInstancesDto> votingInstances = new HashSet<>();
-    private final Map<String, Set<VotingInformationResponseDto>> votingInstancesToTeams = new HashMap<>();
+    private final static Logger LOGGER = LoggerFactory.getLogger(VotingService.class);
+    private final VotingInstancesRepository votingInstancesRepository;
+    private final VotingInstanceInformationRepository votingInstanceInformationRepository;
+    private final VoteRepository voteRepository;
+    private final ObjectMapper objectMapper;
 
-    public VotingService() {
-        votingInstances.add(new VotingInstancesDto("ux-hackathon", "UX Hackathon"));
+    public VotingService(VotingInstancesRepository votingInstancesRepository,
+                         VotingInstanceInformationRepository votingInstanceInformationRepository,
+                         VoteRepository voteRepository,
+                         ObjectMapper objectMapper) {
+        this.votingInstancesRepository = votingInstancesRepository;
+        this.votingInstanceInformationRepository = votingInstanceInformationRepository;
+        this.voteRepository = voteRepository;
+        this.objectMapper = objectMapper;
+        createTestData();
+    }
+
+    public void placeVote(String votingResource, int teamId, String userName, VoteRequestDto voteRequest) {
+        Optional<VotingInstanceEntity> votingInstanceOpt = getVotingInstanceForResourceName(votingResource);
+
+        if ( !votingInstanceOpt.isPresent()) { return; }
+
+        VotingInstanceEntity votingInstanceEntity = votingInstanceOpt.get();
+
+        Optional<VotingInstanceInformationEntity> votingInstanceTeamOpt =
+                votingInstanceInformationRepository.findOneByIdAndVotingId(teamId, votingInstanceEntity.getId());
+
+        if ( !votingInstanceTeamOpt.isPresent()) { return; }
+
+        Optional<VoteEntity> voteEntityOpt = voteRepository.findOneByVotingIdAndUsername(votingInstanceEntity.getId(), userName);
+        VoteEntity vote;
+        if ( voteEntityOpt.isPresent()) {
+            vote = voteEntityOpt.get();
+        } else {
+            vote = new VoteEntity(votingInstanceEntity.getId(), userName);
+        }
+        vote.updateVote(teamId, voteRequest);
+        voteRepository.save(vote);
+        LOGGER.info("Save vote for [{}]", userName);
+
+    }
+
+    public boolean doesVotingResourceNameExist(String resourceName) {
+        return getVotingInstanceForResourceName(resourceName).isPresent();
+    }
+
+    public Optional<VotingInstanceEntity> getVotingInstanceForResourceName(String resourceName) {
+        return votingInstancesRepository.findOneByResourceName(StringUtils.lowerCase(resourceName));
+    }
+
+    public Set<VotingInstancesDto> getAllInstances() {
+        Set<VotingInstancesDto> instances = new HashSet<>();
+        for ( VotingInstanceEntity instancesEntity : votingInstancesRepository.findAll()) {
+            instances.add(new VotingInstancesDto(instancesEntity));
+        }
+        return instances;
+    }
+
+    public Set<VotingInformationResponseDto> getVotingInformationForVotingResourceName(String resourceName) {
+        Set<VotingInformationResponseDto> votingInformation = new HashSet<>();
+        Optional<VotingInstanceEntity> votingInstance = getVotingInstanceForResourceName(resourceName);
+        if ( votingInstance.isPresent()) {
+            for ( VotingInstanceInformationEntity votingInfo : votingInstanceInformationRepository.findAllByVotingId(votingInstance.get().getId())) {
+                try {
+                    Set<PersonDto> teamMembers = objectMapper.readValue(votingInfo.getTeamMembers(), new TypeReference<Set<PersonDto>>() {});
+                    votingInformation.add(new VotingInformationResponseDto(votingInfo, votingInstance.get().getResourceName(), teamMembers));
+                } catch (Exception e) {
+                    // well fuck
+                    LOGGER.error("Could not get certain voting information for voting resource [{}]", resourceName, e);
+                }
+            }
+        }
+        return votingInformation;
+    }
+
+    private void createTestData() {
+
+        VotingInstanceEntity votingInstanceEntity = votingInstancesRepository.save(new VotingInstanceEntity("UX Hackathon Voting", "ux-hackathon"));
 
         Set<PersonDto> teamMembers = new HashSet<>();
         teamMembers.add(new PersonDto("John Doe", "john@prosper.com"));
@@ -30,24 +112,23 @@ public class VotingService {
         teamMembers.add(new PersonDto("Nancy Drew", "nancy@prosper.com"));
         teamMembers.add(new PersonDto("Mark Cunningham", "mcunningham@prosper.com"));
 
-        Set<VotingInformationResponseDto> testTeams = IntStream.range(1, 20)
-                .mapToObj(i -> new VotingInformationResponseDto(i, "ux-hackathon", "test-team-"+i, "This is a short description"+i,
-                        "She sells sea shells on the sea shore said jack in the box with old Mcdonald had a farm eeeei eeeei ooohhh", teamMembers))
+        String teamMembersAsJson;
+        try {
+            teamMembersAsJson = objectMapper.writeValueAsString(teamMembers);
+        } catch (Exception e) {
+            throw new RuntimeException("Blah");
+        }
+
+        Set<VotingInstanceInformationEntity> testTeams = IntStream.range(1, 20)
+                .mapToObj(i -> new VotingInstanceInformationEntity(
+                        votingInstanceEntity.getId(),
+                        "test-team-"+i,
+                        "This is a short description"+i,
+                        "She sells sea shells on the sea shore said jack in the box with old Mcdonald had a farm eeeei eeeei ooohhh",
+                        teamMembersAsJson))
                 .collect(Collectors.toSet());
 
-        votingInstancesToTeams.put("ux-hackathon", testTeams);
-    }
-
-    public boolean doesVotingIdExist(String votingId) {
-        return votingInstances.stream().anyMatch(v -> StringUtils.equalsIgnoreCase(v.getVotingId(), votingId));
-    }
-
-    public Set<VotingInstancesDto> getAllInstances() {
-        return votingInstances;
-    }
-
-    public Set<VotingInformationResponseDto> getVotingInformationForVotingId(String votingId) {
-        return votingInstancesToTeams.containsKey(votingId) ? votingInstancesToTeams.get(votingId) : new HashSet<>();
+        testTeams.forEach(t -> votingInstanceInformationRepository.save(t));
     }
 
 }

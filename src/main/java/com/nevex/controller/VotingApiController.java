@@ -20,7 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class VotingApiController {
 
-    final static String VOTING_RESOURCE = "voting-id";
+    final static String VOTING_RESOURCE = "voting-resource";
+    final static String TEAM_ID = "team-id";
     private final VotingService votingService;
 
     @Autowired
@@ -30,16 +31,20 @@ public class VotingApiController {
 
     @GetMapping(path = "/{"+VOTING_RESOURCE+"}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getVotingInfo(@PathVariable(VOTING_RESOURCE) String votingId) {
-        if ( votingService.doesVotingIdExist(votingId)) {
-            return ResponseEntity.ok(votingService.getVotingInformationForVotingId(votingId));
+        if ( votingService.doesVotingResourceNameExist(votingId)) {
+            return ResponseEntity.ok(votingService.getVotingInformationForVotingResourceName(votingId));
         } else {
             return ResponseEntity.notFound().build();
         }
     }
 
-    @PostMapping(path = "/{"+VOTING_RESOURCE+"}/votes", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> placeNewVote(@RequestBody VoteRequestDto voteRequestDto, OktaUser oktaUser) {
-
+    @PostMapping(path = "/{"+VOTING_RESOURCE+"}/{"+TEAM_ID+"}/votes", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> placeNewVote(
+            @PathVariable(VOTING_RESOURCE) String votingResource,
+            @PathVariable(TEAM_ID) Integer teamId,
+            @RequestBody VoteRequestDto voteRequestDto,
+            OktaUser oktaUser) {
+            votingService.placeVote(votingResource, teamId, oktaUser.getEmail(), voteRequestDto);
         return ResponseEntity.ok().build();
     }
 

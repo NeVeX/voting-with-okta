@@ -33,12 +33,15 @@
         </nav>
     </header>
 
+
+
     <!-- Main -->
     <div id="main">
 
         <div th:each="team, iterStat : ${teams}" class="thumb" style="color: #ffffff; display: inline-grid">
-            <a th:href="'images/fulls/'+((${team.teamId}%8)+1)+'.jpg'" href="images/fulls/1.jpg" class="image">
-                <img th:src="'images/thumbs/'+((${team.teamId}%8)+1)+'.jpg'" src="images/thumbs/1.jpg" alt=""/>
+            
+            <a th:href="'images/fulls/'+((${iterStat.index}%8)+1)+'.jpg'" href="images/fulls/1.jpg" class="image">
+                <img th:src="'images/thumbs/'+((${iterStat.index}%8)+1)+'.jpg'" src="images/thumbs/1.jpg" alt=""/>
             </a>
 
             <div style="padding: 2%; display: flex; flex-direction: column; text-align: center; align-self: center">
@@ -55,31 +58,32 @@
                        th:text="!${memberIterStat.last} ? ${member.fullName} + ', ': ${member.fullName}">Mark Cunningham</a>
                 </p>
 
+                <h3 style="overflow: hidden; word-wrap: break-word; text-align: center;">Vote using the buttons below</h3>
                 <div style="display: inherit; flex-direction: row; ">
                     <input type="submit" value="Grand Prize" class="special"
                            style="margin-right: 2%"
-                           th:attr="data-teamId=${team.teamId}"
+                           data-th-attr="data-teamId=${team.teamId},data-resourceName=${voting_resource}"
                            data-vote-type="grand_prize"
                            th:id="'vote-button-gp-' + ${iterStat.index}"
                            onclick="onVoteButtonClicked(this)"
                     />
                     <input type="submit" value="Most Creative" class="special"
                            style="margin-right: 2%"
-                           th:attr="data-teamId=${team.teamId}"
+                           data-th-attr="data-teamId=${team.teamId}, data-resourceName=${voting_resource}"
                            data-vote-type="most_creative"
                            th:id="'vote-button-mc-' + ${iterStat.index}"
                            onclick="onVoteButtonClicked(this)"
                     />
                     <input type="submit" value="Most Impactful" class="special"
                            style="margin-right: 2%;"
-                           th:attr="data-teamId=${team.teamId}"
+                           data-th-attr="data-teamId=${team.teamId}, data-resourceName=${voting_resource}"
                            data-vote-type="most_impactful"
                            th:id="'vote-button-mi-' + ${iterStat.index}"
                            onclick="onVoteButtonClicked(this)"
                     />
-
-
                 </div>
+                <h3 style="overflow: hidden; word-wrap: break-word; text-align: center;" th:id="'thanks-for-voting-'+${team.teamId}">Vote using the buttons below</h3>
+                <!--<h4 class="you-voted-header" >Thanks for voting</h4>-->
             </div>
 
         </div>

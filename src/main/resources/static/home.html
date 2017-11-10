@@ -31,7 +31,7 @@
                                 <ul class="actions">
                                     <li th:each=" instance : ${instances}">
                                         <button
-                                                th:onclick="'window.location.href = \'' + @{/{votingId}(votingId=${instance.votingId})} + '\''"
+                                                th:onclick="'window.location.href = \'' + @{/{resourceName}(resourceName=${instance.resourceName})} + '\''"
                                                 th:text="${instance.name}">Test</button>
                                     </li>
                                 </ul>

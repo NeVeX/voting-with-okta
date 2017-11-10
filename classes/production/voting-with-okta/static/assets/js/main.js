@@ -1,9 +1,3 @@
-/*
-	Multiverse by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
-*/
-
 (function($) {
 
 	skel.breakpoints({
@@ -81,7 +75,7 @@
 				// Events.
 					$this
 						.on('click', function(event) {
-							event.stopPropagation();
+							// event.stopPropagation();
 						})
 						.on('---toggle', function() {
 
@@ -122,8 +116,8 @@
 						.css('cursor', 'pointer')
 						.on('click', function(event) {
 
-							event.preventDefault();
-							event.stopPropagation();
+							// event.preventDefault();
+							// event.stopPropagation();
 
 							$this.trigger('---toggle');
 
@@ -131,35 +125,35 @@
 
 			});
 
-			// Global events.
-				$body
-					.on('click', function(event) {
+			// // Global events.
+			// 	$body
+			// 		.on('click', function(event) {
+            //
+			// 			if ($body.hasClass('content-active')) {
+            //
+			// 				event.preventDefault();
+			// 				event.stopPropagation();
+            //
+			// 				$panels.trigger('---hide');
+            //
+			// 			}
+            //
+			// 		});
 
-						if ($body.hasClass('content-active')) {
-
-							event.preventDefault();
-							event.stopPropagation();
-
-							$panels.trigger('---hide');
-
-						}
-
-					});
-
-				$window
-					.on('keyup', function(event) {
-
-						if (event.keyCode == 27
-						&&	$body.hasClass('content-active')) {
-
-							event.preventDefault();
-							event.stopPropagation();
-
-							$panels.trigger('---hide');
-
-						}
-
-					});
+				// $window
+				// 	.on('keyup', function(event) {
+                //
+				// 		if (event.keyCode == 27
+				// 		&&	$body.hasClass('content-active')) {
+                //
+				// 			event.preventDefault();
+				// 			event.stopPropagation();
+                //
+				// 			$panels.trigger('---hide');
+                //
+				// 		}
+                //
+				// 	});
 
 		// Header.
 			var $header = $('#header');
@@ -181,8 +175,8 @@
 							.css('cursor', 'pointer')
 							.on('click', function(event) {
 
-								event.preventDefault();
-								event.stopPropagation();
+								// event.preventDefault();
+								// event.stopPropagation();
 
 								window.location.href = href;
 
@@ -193,24 +187,24 @@
 		// Footer.
 			var $footer = $('#footer');
 
-			// Copyright.
-			// This basically just moves the copyright line to the end of the *last* sibling of its current parent
-			// when the "medium" breakpoint activates, and moves it back when it deactivates.
-				$footer.find('.copyright').each(function() {
-
-					var $this = $(this),
-						$parent = $this.parent(),
-						$lastParent = $parent.parent().children().last();
-
-					skel
-						.on('+medium', function() {
-							$this.appendTo($lastParent);
-						})
-						.on('-medium', function() {
-							$this.appendTo($parent);
-						});
-
-				});
+			// // Copyright.
+			// // This basically just moves the copyright line to the end of the *last* sibling of its current parent
+			// // when the "medium" breakpoint activates, and moves it back when it deactivates.
+			// 	$footer.find('.copyright').each(function() {
+            //
+			// 		var $this = $(this),
+			// 			$parent = $this.parent(),
+			// 			$lastParent = $parent.parent().children().last();
+            //
+			// 		skel
+			// 			.on('+medium', function() {
+			// 				$this.appendTo($lastParent);
+			// 			})
+			// 			.on('-medium', function() {
+			// 				$this.appendTo($parent);
+			// 			});
+            //
+			// 	});
 
 		// Main.
 			var $main = $('#main');
@@ -282,8 +276,14 @@
 					usePopupForceClose: true,
 					usePopupLoader: true,
 					usePopupNav: true,
-					windowMargin: 50
-				});
+					windowMargin: 30,
+
+
+                    usePopupEasyClose: false,
+                    popupIsFixed: false
+
+
+                });
 
 				// Hack: Set margins to 0 when 'xsmall' activates.
 					skel
