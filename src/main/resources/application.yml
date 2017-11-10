@@ -33,7 +33,7 @@ security:
   filter-order: 5
 
 server:
-  context-path: /
+  context-path: /voting
   port: 8080
 
 # Hibernate

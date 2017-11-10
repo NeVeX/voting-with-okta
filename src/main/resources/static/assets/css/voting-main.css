@@ -1426,6 +1426,26 @@
 		color: #a0a0a1;
 	}
 
+	.nevex-your-vote-info {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.nevex-your-vote-individual {
+		display: flex;
+		flex-direction: row;
+	}
+
+	.nevex-your-vote-team-name {
+		color: goldenrod;
+		margin-right: 1em;
+	}
+
+	.nevex-panel {
+		border-bottom: solid 1px firebrick;
+		border-top: solid 1px firebrick;
+	}
+
 	#header {
 		-moz-transform: translateY(0);
 		-webkit-transform: translateY(0);

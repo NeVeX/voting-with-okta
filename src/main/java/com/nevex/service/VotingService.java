@@ -9,6 +9,7 @@ import com.nevex.dao.entity.VoteEntity;
 import com.nevex.dao.entity.VotingInstanceEntity;
 import com.nevex.dao.entity.VotingInstanceInformationEntity;
 import com.nevex.model.PersonDto;
+import com.nevex.model.UserVoteResponseDto;
 import com.nevex.model.VoteRequestDto;
 import com.nevex.model.VotingInformationResponseDto;
 import com.nevex.model.VotingInstancesDto;
@@ -42,6 +43,36 @@ public class VotingService {
         this.voteRepository = voteRepository;
         this.objectMapper = objectMapper;
         createTestData();
+    }
+
+    public Optional<UserVoteResponseDto> getUserVotes(String votingResourceName, String username) {
+        Optional<VotingInstanceEntity> votingInstanceOpt = getVotingInstanceForResourceName(votingResourceName);
+        if ( !votingInstanceOpt.isPresent()) { return Optional.empty(); }
+        VotingInstanceEntity votingInstanceEntity = votingInstanceOpt.get();
+
+        Optional<VoteEntity> voteEntityOpt = voteRepository.findOneByVotingIdAndUsername(votingInstanceEntity.getId(), username);
+        if ( !voteEntityOpt.isPresent()) { return Optional.empty(); }
+        VoteEntity voteEntity = voteEntityOpt.get();
+        Optional<VotingInformationResponseDto> grandPrizeOpt = getTeamInformation(votingResourceName, voteEntity.getGrandPrize(), voteEntity.getVotingId());
+        Optional<VotingInformationResponseDto> mostCreativeOpt = getTeamInformation(votingResourceName, voteEntity.getMostCreative(), voteEntity.getVotingId());
+        Optional<VotingInformationResponseDto> mostImpactfulOpt = getTeamInformation(votingResourceName, voteEntity.getMostImpactful(), voteEntity.getVotingId());
+
+        UserVoteResponseDto userVote = new UserVoteResponseDto(
+                username,
+                grandPrizeOpt.isPresent() ? grandPrizeOpt.get().getTeamName() : null,
+                mostCreativeOpt.isPresent() ? mostCreativeOpt.get().getTeamName() : null,
+                mostImpactfulOpt.isPresent() ? mostImpactfulOpt.get().getTeamName() : null
+        );
+        return Optional.of(userVote);
+    }
+
+    private Optional<VotingInformationResponseDto> getTeamInformation(String votingResourceName, Integer teamId, int votingId) {
+        if ( teamId == null) { return Optional.empty(); }
+        Optional<VotingInstanceInformationEntity> teamInfoOpt = votingInstanceInformationRepository.findOneByIdAndVotingId(teamId, votingId);
+        if ( !teamInfoOpt.isPresent()) { return Optional.empty(); }
+
+        VotingInstanceInformationEntity teamInfo = teamInfoOpt.get();
+        return Optional.ofNullable(createVotingInfoResponse(teamInfo, votingResourceName));
     }
 
     public void placeVote(String votingResource, int teamId, String userName, VoteRequestDto voteRequest) {
@@ -90,16 +121,22 @@ public class VotingService {
         Optional<VotingInstanceEntity> votingInstance = getVotingInstanceForResourceName(resourceName);
         if ( votingInstance.isPresent()) {
             for ( VotingInstanceInformationEntity votingInfo : votingInstanceInformationRepository.findAllByVotingId(votingInstance.get().getId())) {
-                try {
-                    Set<PersonDto> teamMembers = objectMapper.readValue(votingInfo.getTeamMembers(), new TypeReference<Set<PersonDto>>() {});
-                    votingInformation.add(new VotingInformationResponseDto(votingInfo, votingInstance.get().getResourceName(), teamMembers));
-                } catch (Exception e) {
-                    // well fuck
-                    LOGGER.error("Could not get certain voting information for voting resource [{}]", resourceName, e);
-                }
+                VotingInformationResponseDto votingResponseInfo = createVotingInfoResponse(votingInfo, resourceName);
+                if ( votingResponseInfo != null ) { votingInformation.add(votingResponseInfo); }
             }
         }
         return votingInformation;
+    }
+
+    private VotingInformationResponseDto createVotingInfoResponse(VotingInstanceInformationEntity votingEntity, String votingResourceName) {
+        try {
+            Set<PersonDto> teamMembers = objectMapper.readValue(votingEntity.getTeamMembers(), new TypeReference<Set<PersonDto>>() {});
+            return new VotingInformationResponseDto(votingEntity, votingResourceName, teamMembers);
+        } catch (Exception e) {
+            // well fuck
+            LOGGER.error("Could not get certain voting information for voting resource [{}]", votingResourceName, e);
+            return null;
+        }
     }
 
     private void createTestData() {
