@@ -3,6 +3,8 @@ package com.nevex.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Objects;
+
 /**
  * Created by Mark Cunningham on 11/9/2017.
  */
@@ -30,5 +32,18 @@ public final class VotingInstancesDto {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        VotingInstancesDto that = (VotingInstancesDto) o;
+        return Objects.equals(votingId, that.votingId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(votingId);
     }
 }

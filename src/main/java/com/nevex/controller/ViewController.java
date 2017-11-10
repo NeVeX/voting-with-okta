@@ -35,10 +35,12 @@ public class ViewController {
 
     @GetMapping(path = "/{"+VOTING_RESOURCE+"}")
     public ModelAndView getVotingPage(@PathVariable(VOTING_RESOURCE) String votingId) {
-//        if ( votingService.getAllInstances().contains(votingId)) {
-//            return toViewName("voting.html");
-//        }
-        return new ModelAndView("voting");
+        if ( votingService.doesVotingIdExist(votingId)) {
+            ModelAndView votingModelView = new ModelAndView("voting");
+            votingModelView.addObject("teams", votingService.getVotingInformationForVotingId(votingId));
+            return votingModelView;
+        }
+        return new ModelAndView("error");
     }
 
 }
