@@ -1,12 +1,10 @@
 package com.nevex.config;
 
+import com.nevex.config.property.VotingWithOktaProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.embedded.Ssl;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,6 +23,9 @@ public class VotingWebSecurityConfiguration extends WebSecurityConfigurerAdapter
 
     @Autowired
     private ServerProperties serverProperties;
+    @Autowired
+    private VotingWithOktaProperties votingWithOktaProperties;
+
     @Value("${security.saml2.metadata-url}")
     String metadataUrl;
 
@@ -45,22 +46,22 @@ public class VotingWebSecurityConfiguration extends WebSecurityConfigurerAdapter
         Ssl ssl = serverProperties.getSsl();
 
         http
-                .authorizeRequests()
+            .authorizeRequests()
                 .antMatchers("/saml*").permitAll()
                 .anyRequest().authenticated()
-                .and()
+            .and()
                 .apply(saml())
                 .serviceProvider()
                 .keyStore()
-                .storeFilePath("saml/keystore.jks")
+                .storeFilePath(votingWithOktaProperties.getKeystoreResource())
                 .password(ssl.getKeyStorePassword())
                 .keyname(ssl.getKeyAlias())
                 .keyPassword(ssl.getKeyStorePassword())
-                .and()
+            .and()
                 .protocol("https")
-                .hostname(String.format("%s:%s", "localhost", serverProperties.getPort()))
-                .basePath("/voting")
-                .and()
+                .hostname(String.format("%s:%s", votingWithOktaProperties.getSamlHostname(), serverProperties.getPort()))
+                .basePath(serverProperties.getContextPath())
+            .and()
                 .identityProvider()
                 .metadataFilePath(metadataUrl);
     }

@@ -1,3 +1,7 @@
+voting-with-okta:
+  saml-hostname: localhost
+  keystore-resource: saml/keystore.jks
+
 security:
   basic:
     enabled: false
@@ -11,8 +15,7 @@ server:
   ssl:
     enabled: true
     key-alias: voting-with-okta-saml
-    key-store: src/main/resources/saml/keystore.jks
-    key-store-password: secret
+    key-store: src/main/resources/${voting-with-okta.keystore-resource}
 
 spring:
   thymeleaf:
@@ -26,6 +29,5 @@ spring:
   jpa:
     show-sql: false
     hibernate.ddl-auto: create # dump the data for now on each start
-
 
 

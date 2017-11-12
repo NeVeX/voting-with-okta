@@ -6,3 +6,5 @@ build/
 *senstive*.yml
 src/main/resources/saml/
 classes/
+src/main/resources/application-sensitive.yml
+database/
