@@ -47,13 +47,13 @@ public class VotingApiController {
             @PathVariable(TEAM_ID) Integer teamId,
             @RequestBody VoteRequestDto voteRequestDto,
             OktaUser oktaUser) {
-            votingService.placeVote(votingResource, teamId, oktaUser.getEmail(), voteRequestDto);
-        return getUserVotes(votingResource, oktaUser.getEmail()); // get the current vote for the user
+            votingService.placeVote(votingResource, teamId, oktaUser.getUsername(), voteRequestDto);
+        return getUserVotes(votingResource, oktaUser.getUsername()); // get the current vote for the user
     }
 
     @GetMapping(path = "/{"+VOTING_RESOURCE+"}/votes", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getUserVotes(@PathVariable(VOTING_RESOURCE) String votingResource, OktaUser oktaUser) {
-        return getUserVotes(votingResource, oktaUser.getEmail());
+        return getUserVotes(votingResource, oktaUser.getUsername());
     }
 
     private ResponseEntity<?> getUserVotes(String votingResource, String username) {

@@ -5,13 +5,13 @@ package com.nevex.model;
  */
 public final class OktaUser {
 
-    private final String email;
+    private final String username;
 
-    public OktaUser(String email) {
-        this.email = email;
+    public OktaUser(String username) {
+        this.username = username;
     }
 
-    public String getEmail() {
-        return email;
+    public String getUsername() {
+        return username;
     }
 }

@@ -1,10 +1,13 @@
 package com.nevex.config;
 
 import com.nevex.config.property.VotingWithOktaProperties;
+import com.nevex.filter.OktaAuthenticatedUserExtractorFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.embedded.Ssl;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -29,17 +32,17 @@ public class VotingWebSecurityConfiguration extends WebSecurityConfigurerAdapter
     @Value("${security.saml2.metadata-url}")
     String metadataUrl;
 
-//    @Bean
-//    FilterRegistrationBean oktaAuthenticatedUserExtractorFilterBean(@Value("${security.filter-order}") Integer filterOrder) {
-//        FilterRegistrationBean reg = new FilterRegistrationBean(oktaAuthenticatedUserExtractorFilter());
-//        reg.setOrder(filterOrder+10);
-//        return reg;
-//    }
-//
-//    @Bean
-//    OktaAuthenticatedUserExtractorFilter oktaAuthenticatedUserExtractorFilter() {
-//        return new OktaAuthenticatedUserExtractorFilter();
-//    }
+    @Bean
+    FilterRegistrationBean oktaAuthenticatedUserExtractorFilterBean(@Value("${security.filter-order}") Integer filterOrder) {
+        FilterRegistrationBean reg = new FilterRegistrationBean(oktaAuthenticatedUserExtractorFilter());
+        reg.setOrder(filterOrder+10);
+        return reg;
+    }
+
+    @Bean
+    OktaAuthenticatedUserExtractorFilter oktaAuthenticatedUserExtractorFilter() {
+        return new OktaAuthenticatedUserExtractorFilter();
+    }
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
