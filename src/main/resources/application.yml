@@ -1,46 +1,18 @@
-
-#okta:
-#  oauth2:
-#    redirect-uri: /test
-#    issuer: https://dev-309873.oktapreview.com/oauth2/default
-#    clientId: 0oacrcx8le4Nrs7Lm0h7
-#    clientSecret: meTTWZWu_MdymXUAML6JknDyot61D3mlp1QV2XZh
-
-# Configure the callback URL to match the previous section
-#security.oauth2.sso.loginPath: /test
-
-# https://dev-309873.oktapreview.com/oauth2/default
-
 security:
-  oauth2:
-    client:
-      # From OIDC app
-      clientId: 0oacs9tzmh57EKwnn0h7
-      clientSecret: BaYnB6mEf5PTNwwb7G7JwiV-kJzApMUFtUbbacDR
-      # From Authorization Server's metadata
-      accessTokenUri: https://dev-309873.oktapreview.com/oauth2/default/v1/token
-      userAuthorizationUri: https://dev-309873.oktapreview.com/oauth2/default/v1/authorize
-      clientAuthenticationScheme: form
-      scope: openid profile email
-      use-current-uri: true # if true, the /login always wins
-#      pre-established-redirect-uri: http://localhost:8080/welcome
-    resource:
-      # from your Auth Server's metadata
-      userInfoUri: https://dev-309873.oktapreview.com/oauth2/default/v1/userinfo
-      prefer-token-info: false
   basic:
     enabled: false
   filter-order: 5
+  saml2:
+    metadata-url: https://dev-309873.oktapreview.com/app/exkcujynn6dhbolHb0h7/sso/saml/metadata
 
 server:
   context-path: /voting
   port: 56910
-
-# Hibernate
-
-#logging:
-#  level:
-#    org.springframework: DEBUG
+  ssl:
+    enabled: true
+    key-alias: voting-with-okta-saml
+    key-store: src/main/resources/saml/keystore.jks
+    key-store-password: secret
 
 spring:
   thymeleaf:
