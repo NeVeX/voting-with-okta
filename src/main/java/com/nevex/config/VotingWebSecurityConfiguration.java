@@ -20,18 +20,6 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 @Configuration
 public class VotingWebSecurityConfiguration /*extends WebSecurityConfigurerAdapter*/ {
 
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//        http
-//                .formLogin().disable()
-//                .httpBasic().disable()
-//                .anonymous().disable()
-//                .csrf().disable()
-//
-//                .authorizeRequests().anyRequest().authenticated();
-//        http.addFilterAfter(oktaAuthenticatedUserExtractorFilter(), AbstractPreAuthenticatedProcessingFilter.class);
-//    }
-
     @Bean
     FilterRegistrationBean oktaAuthenticatedUserExtractorFilterBean(@Value("${security.filter-order}") Integer filterOrder) {
         FilterRegistrationBean reg = new FilterRegistrationBean(oktaAuthenticatedUserExtractorFilter());

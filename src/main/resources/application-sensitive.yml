@@ -2,11 +2,11 @@ security:
   oauth2:
     client:
       # From OIDC app
-      clientId: 0oa1d4x8ft9K4LPZe1d8
-      clientSecret: Sm-ZvLgn7JW7iF0iM7yjIDOsA764qzrfyoOezDyi
       # From Authorization Server's metadata
       accessTokenUri: https://prosper.okta.com/oauth2/default/v1/token
       userAuthorizationUri: https://prosper.okta.com/oauth2/default/v1/authorize
+#      pre-established-redirect-uri: https://nevexcomputing.com/voting
     resource:
       # from your Auth Server's metadata
       userInfoUri: https://prosper.okta.com/oauth2/default/v1/userinfo
+

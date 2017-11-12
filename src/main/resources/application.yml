@@ -34,7 +34,7 @@ security:
 
 server:
   context-path: /voting
-  port: 8080
+  port: 56910
 
 # Hibernate
 
