@@ -45,6 +45,22 @@ public class VotingService {
         createTestData();
     }
 
+//    public void openVoting(String votingResourceName) {
+//        changeVotingOpenOrClosed(votingResourceName, true);
+//    }
+//
+//    public void closeVoting(String votingResourceName) {
+//        changeVotingOpenOrClosed(votingResourceName, false);
+//    }
+
+    public void changeVotingOpenOrClosed(String votingResourceName, boolean votingIsOpen) {
+        Optional<VotingInstanceEntity> votingInstanceOpt = getVotingInstanceForResourceName(votingResourceName);
+        if ( votingInstanceOpt.isPresent()) {
+            votingInstanceOpt.get().setOpenForVoting(votingIsOpen);
+            votingInstancesRepository.save(votingInstanceOpt.get());
+        }
+    }
+
     public Optional<UserVoteResponseDto> getUserVotes(String votingResourceName, String username) {
         Optional<VotingInstanceEntity> votingInstanceOpt = getVotingInstanceForResourceName(votingResourceName);
         if ( !votingInstanceOpt.isPresent()) { return Optional.empty(); }
@@ -104,6 +120,14 @@ public class VotingService {
         return getVotingInstanceForResourceName(resourceName).isPresent();
     }
 
+    public boolean isVotingOpenForVotingResource(String resourceName) {
+        Optional<VotingInstanceEntity> votingInstance = getVotingInstanceForResourceName(resourceName);
+        if ( votingInstance.isPresent()) {
+            return votingInstance.get().getOpenForVoting();
+        }
+        return false;
+    }
+
     public Optional<VotingInstanceEntity> getVotingInstanceForResourceName(String resourceName) {
         return votingInstancesRepository.findOneByResourceName(StringUtils.lowerCase(resourceName));
     }
@@ -141,7 +165,7 @@ public class VotingService {
 
     private void createTestData() {
 
-        VotingInstanceEntity votingInstanceEntity = votingInstancesRepository.save(new VotingInstanceEntity("UX Hackathon Voting", "ux-hackathon"));
+        VotingInstanceEntity votingInstanceEntity = votingInstancesRepository.save(new VotingInstanceEntity("UX Hackathon Voting", "ux-hackathon", false));
 
         Set<PersonDto> teamMembers = new HashSet<>();
         teamMembers.add(new PersonDto("John Doe", "john@prosper.com"));

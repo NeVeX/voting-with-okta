@@ -1,10 +1,14 @@
 package com.nevex.controller;
 
 import com.nevex.dao.entity.VotingInstanceInformationEntity;
+import com.nevex.model.OktaUser;
 import com.nevex.model.VotingInformationRequestDto;
 import com.nevex.model.VotingInformationResponseDto;
 import com.nevex.service.VotingService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.security.saml.websso.WebSSOProfileConsumer;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,9 +53,26 @@ public class ViewController {
             List<VotingInformationResponseDto> teamsOrdered = teams.stream().sorted(Comparator.comparing(VotingInformationRequestDto::getTeamName)).collect(Collectors.toList());;
             votingModelView.addObject("teams", teamsOrdered);
             votingModelView.addObject("voting_resource", votingResourceName);
+            votingModelView.addObject("voting_open", votingService.isVotingOpenForVotingResource(votingResourceName));
+
             return votingModelView;
         }
         return new ModelAndView("error");
     }
 
+    @GetMapping(path = "/{"+VOTING_RESOURCE+"}/admin")
+    public ModelAndView getVotingAdminPage(@PathVariable(VOTING_RESOURCE) String votingResourceName,
+                                           OktaUser oktaUser) {
+        if (!isAdminUser(oktaUser)) {
+            return new ModelAndView("error");
+        }
+        if (votingService.doesVotingResourceNameExist(votingResourceName)) {
+            return new ModelAndView("voting-admin");
+        }
+        return new ModelAndView("error");
+    }
+
+    private boolean isAdminUser(OktaUser oktaUser) {
+        return StringUtils.containsIgnoreCase(oktaUser.getUsername(), "mcunningham");
+    }
 }

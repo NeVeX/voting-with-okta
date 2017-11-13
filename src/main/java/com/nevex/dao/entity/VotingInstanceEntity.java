@@ -28,12 +28,16 @@ public class VotingInstanceEntity implements Serializable {
     @Basic
     @Column(name = "resource_name")
     private String resourceName;
+    @Basic
+    @Column(name = "open_for_voting")
+    private boolean openForVoting;
 
     public VotingInstanceEntity() { }
 
-    public VotingInstanceEntity(String name, String resourceName) {
+    public VotingInstanceEntity(String name, String resourceName, boolean openForVoting) {
         this.name = name;
         this.resourceName = resourceName;
+        this.openForVoting = openForVoting;
     }
 
     public int getId() {
@@ -58,5 +62,13 @@ public class VotingInstanceEntity implements Serializable {
 
     public void setResourceName(String resourceName) {
         this.resourceName = resourceName;
+    }
+
+    public boolean getOpenForVoting() {
+        return openForVoting;
+    }
+
+    public void setOpenForVoting(boolean openForVoting) {
+        this.openForVoting = openForVoting;
     }
 }

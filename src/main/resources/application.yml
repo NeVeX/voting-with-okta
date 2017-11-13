@@ -1,6 +1,7 @@
 voting-with-okta:
   saml-hostname: localhost
   keystore-resource: saml/keystore.jks
+  admin-key: boston
 
 security:
   basic:

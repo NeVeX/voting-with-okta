@@ -1446,6 +1446,13 @@
 		border-top: solid 1px firebrick;
 	}
 
+	.voting-is-not-open {
+		text-align: center;
+		width: 100%;
+		margin-top: 2em;
+		color: orangered;
+	}
+
 	#header {
 		-moz-transform: translateY(0);
 		-webkit-transform: translateY(0);

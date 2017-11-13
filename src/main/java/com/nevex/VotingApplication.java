@@ -8,7 +8,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 /**
  * Created by Mark Cunningham on 11/8/2017.
  */
-
 @SpringBootApplication
 public class VotingApplication {
 

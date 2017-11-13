@@ -15,6 +15,16 @@ public class VotingWithOktaProperties {
     private String samlHostname;
     @NotBlank
     private String keystoreResource;
+    @NotBlank
+    private String adminKey;
+
+    public String getAdminKey() {
+        return adminKey;
+    }
+
+    public void setAdminKey(String adminKey) {
+        this.adminKey = adminKey;
+    }
 
     public String getKeystoreResource() {
         return keystoreResource;

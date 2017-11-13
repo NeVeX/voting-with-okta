@@ -11,30 +11,30 @@ import java.util.Objects;
  */
 public final class VotingInstancesDto {
 
-//    private final String VOTING_RESOURCE = "voting_id";
     private final String RESOURCE_NAME = "resource_name";
     private final String NAME = "name";
+    private final String OPEN_FOR_VOTING = "open_for_voting";
 
-//    @JsonProperty(VOTING_RESOURCE)
-//    private final String votingId;
     @JsonProperty(RESOURCE_NAME)
     private final String resourceName;
     @JsonProperty(NAME)
     private final String name;
+    @JsonProperty(OPEN_FOR_VOTING)
+    private final boolean openForVoting;
 
     @JsonCreator
     public VotingInstancesDto(
-//            @JsonProperty(value = VOTING_RESOURCE, required = true) String votingId,
             @JsonProperty(value = NAME, required = true) String name,
-            @JsonProperty(value = RESOURCE_NAME, required = true) String resourceName
+            @JsonProperty(value = RESOURCE_NAME, required = true) String resourceName,
+            @JsonProperty(value = OPEN_FOR_VOTING, required = true) boolean openForVoting
             ) {
-//        this.votingId = votingId;
         this.name = name;
         this.resourceName = resourceName;
+        this.openForVoting = openForVoting;
     }
 
     public VotingInstancesDto(VotingInstanceEntity votingInstanceEntity) {
-        this(votingInstanceEntity.getName(), votingInstanceEntity.getResourceName());
+        this(votingInstanceEntity.getName(), votingInstanceEntity.getResourceName(), votingInstanceEntity.getOpenForVoting());
     }
 
     public String getResourceName() {
@@ -43,6 +43,10 @@ public final class VotingInstancesDto {
 
     public String getName() {
         return name;
+    }
+
+    public boolean isOpenForVoting() {
+        return openForVoting;
     }
 
     @Override

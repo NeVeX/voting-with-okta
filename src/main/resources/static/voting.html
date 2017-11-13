@@ -37,55 +37,58 @@
     <!-- Main -->
     <div id="main">
 
-        <div th:each="team, iterStat : ${teams}" class="thumb" style="color: #ffffff; display: inline-grid">
+        <!--<div th:if="${voting_open}" th:each="team, iterStat : ${teams}" class="thumb" style="color: #ffffff; display: inline-grid">-->
 
-            <a th:href="'images/fulls/'+((${iterStat.index}%8)+1)+'.jpg'" href="images/fulls/1.jpg" class="image">
-                <img th:src="'images/thumbs/'+((${iterStat.index}%8)+1)+'.jpg'" src="images/thumbs/1.jpg" alt=""/>
-            </a>
+            <!--<a th:href="'images/fulls/'+((${iterStat.index}%8)+1)+'.jpg'" href="images/fulls/1.jpg" class="image">-->
+                <!--<img th:src="'images/thumbs/'+((${iterStat.index}%8)+1)+'.jpg'" src="images/thumbs/1.jpg" alt=""/>-->
+            <!--</a>-->
 
-            <div style="padding: 2%; display: flex; flex-direction: column; text-align: center; align-self: center">
-                <h1 style="overflow: hidden; text-align: center; word-wrap: break-word;" th:text="${team.teamName}">TEAM NAME</h1>
-                <h4 style="overflow: hidden; word-wrap: break-word; text-align: center; font-style: italic" th:text="${team.shortDescription}">SHORT DESCRIPTION</h4>
-            </div>
+            <!--<div style="padding: 2%; display: flex; flex-direction: column; text-align: center; align-self: center">-->
+                <!--<h1 style="overflow: hidden; text-align: center; word-wrap: break-word;" th:text="${team.teamName}">TEAM NAME</h1>-->
+                <!--<h4 style="overflow: hidden; word-wrap: break-word; text-align: center; font-style: italic" th:text="${team.shortDescription}">SHORT DESCRIPTION</h4>-->
+            <!--</div>-->
 
-            <div class="do-not-show-me-in-thumb" >
-                <p style="padding: 2%" th:text="${team.longDescription}">LONG DESCRIPTION</p>
+            <!--<div class="do-not-show-me-in-thumb" >-->
+                <!--<p style="padding: 2%" th:text="${team.longDescription}">LONG DESCRIPTION</p>-->
 
-                <p>
-                    Team Members:
-                    <a th:each="member, memberIterStat : ${team.teamMembers}" th:href="'mailto:' + ${member.email}"
-                       th:text="!${memberIterStat.last} ? ${member.fullName} + ', ': ${member.fullName}">Mark Cunningham</a>
-                </p>
+                <!--<p>-->
+                    <!--Team Members:-->
+                    <!--<a th:each="member, memberIterStat : ${team.teamMembers}" th:href="'mailto:' + ${member.email}"-->
+                       <!--th:text="!${memberIterStat.last} ? ${member.fullName} + ', ': ${member.fullName}">Mark Cunningham</a>-->
+                <!--</p>-->
 
-                <h3 style="overflow: hidden; word-wrap: break-word; text-align: center;">Vote using the buttons below</h3>
-                <div style="display: inherit; flex-direction: row; ">
-                    <input type="submit" value="Grand Prize" class="special"
-                           style="margin-right: 2%"
-                           data-th-attr="data-teamId=${team.teamId},data-resourceName=${voting_resource}"
-                           data-vote-type="grand_prize"
-                           th:id="'vote-button-gp-' + ${iterStat.index}"
-                           onclick="onVoteButtonClicked(this)"
-                    />
-                    <input type="submit" value="Most Creative" class="special"
-                           style="margin-right: 2%"
-                           data-th-attr="data-teamId=${team.teamId}, data-resourceName=${voting_resource}"
-                           data-vote-type="most_creative"
-                           th:id="'vote-button-mc-' + ${iterStat.index}"
-                           onclick="onVoteButtonClicked(this)"
-                    />
-                    <input type="submit" value="Most Impactful" class="special"
-                           style="margin-right: 2%;"
-                           data-th-attr="data-teamId=${team.teamId}, data-resourceName=${voting_resource}"
-                           data-vote-type="most_impactful"
-                           th:id="'vote-button-mi-' + ${iterStat.index}"
-                           onclick="onVoteButtonClicked(this)"
-                    />
-                </div>
-                <!--<h3 style="overflow: hidden; word-wrap: break-word; text-align: center;" th:id="'thanks-for-voting-'+${team.teamId}">Vote using the buttons below</h3>-->
-                <!--<h4 class="you-voted-header" >Thanks for voting</h4>-->
-            </div>
+                <!--<h3 style="overflow: hidden; word-wrap: break-word; text-align: center;">Vote using the buttons below</h3>-->
+                <!--<div style="display: inherit; flex-direction: row; ">-->
+                    <!--<input type="submit" value="Grand Prize" class="special"-->
+                           <!--style="margin-right: 2%"-->
+                           <!--data-th-attr="data-teamId=${team.teamId},data-resourceName=${voting_resource}"-->
+                           <!--data-vote-type="grand_prize"-->
+                           <!--th:id="'vote-button-gp-' + ${iterStat.index}"-->
+                           <!--onclick="onVoteButtonClicked(this)"-->
+                    <!--/>-->
+                    <!--<input type="submit" value="Most Creative" class="special"-->
+                           <!--style="margin-right: 2%"-->
+                           <!--data-th-attr="data-teamId=${team.teamId}, data-resourceName=${voting_resource}"-->
+                           <!--data-vote-type="most_creative"-->
+                           <!--th:id="'vote-button-mc-' + ${iterStat.index}"-->
+                           <!--onclick="onVoteButtonClicked(this)"-->
+                    <!--/>-->
+                    <!--<input type="submit" value="Most Impactful" class="special"-->
+                           <!--style="margin-right: 2%;"-->
+                           <!--data-th-attr="data-teamId=${team.teamId}, data-resourceName=${voting_resource}"-->
+                           <!--data-vote-type="most_impactful"-->
+                           <!--th:id="'vote-button-mi-' + ${iterStat.index}"-->
+                           <!--onclick="onVoteButtonClicked(this)"-->
+                    <!--/>-->
+                <!--</div>-->
+                <!--&lt;!&ndash;<h3 style="overflow: hidden; word-wrap: break-word; text-align: center;" th:id="'thanks-for-voting-'+${team.teamId}">Vote using the buttons below</h3>&ndash;&gt;-->
+                <!--&lt;!&ndash;<h4 class="you-voted-header" >Thanks for voting</h4>&ndash;&gt;-->
+            <!--</div>-->
 
-        </div>
+        <!--</div>-->
+        <!---->
+
+        <h1 th:unless="${voting_open}" class="voting-is-not-open">Voting is not open</h1>
 
     </div>
 
