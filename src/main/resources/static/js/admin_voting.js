@@ -11,7 +11,7 @@ function openOrCloseVoting(votingChange) {
 
     $.ajax({
         type: "POST",
-        url: "api/"+votingChange,
+        url: "admin/"+votingChange,
         headers: getHeadersForApiPostCall(),
         success: function(data) {
             console.log("Successfully changed vote for "+votingChange);
@@ -22,4 +22,10 @@ function openOrCloseVoting(votingChange) {
             alert("Hmm, there was an error");
         }
     });
+}
+
+function getHeadersForApiPostCall() {
+    var csrfToken = $("meta[name='_csrf']").attr("content");
+    // var csrfHeader = $("meta[name='_csrf_header']").attr("content");
+    return { "Content-Type": "application/json", "X-CSRF-TOKEN": csrfToken };
 }

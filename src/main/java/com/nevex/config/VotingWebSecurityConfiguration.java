@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.saml.websso.WebSSOProfileConsumer;
@@ -85,6 +86,15 @@ public class VotingWebSecurityConfiguration extends WebSecurityConfigurerAdapter
     OktaAuthenticatedUserExtractorFilter oktaAuthenticatedUserExtractorFilter() {
         return new OktaAuthenticatedUserExtractorFilter();
     }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring()
+                // Spring Security should completely ignore URLs starting with /resources/
+                .antMatchers("/resources/**");
+        super.configure(web);
+    }
+
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {

@@ -31,13 +31,10 @@ public class VotingApiController {
     final static String VOTING_RESOURCE = "voting-resource";
     final static String TEAM_ID = "team-id";
     private final VotingService votingService;
-    private final String adminKey;
 
     @Autowired
-    public VotingApiController(VotingService votingService,
-                               VotingWithOktaProperties properties) {
+    public VotingApiController(VotingService votingService) {
         this.votingService = votingService;
-        this.adminKey = properties.getAdminKey();
     }
 
     @GetMapping(path = "/{"+VOTING_RESOURCE+"}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -58,32 +55,6 @@ public class VotingApiController {
             votingService.placeVote(votingResource, teamId, oktaUser.getUsername(), voteRequestDto);
         return getUserVotes(votingResource, oktaUser.getUsername()); // get the current vote for the user
     }
-
-    @PostMapping(path = "/{"+VOTING_RESOURCE+"}/admin/openvoting", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> openVoting(@PathVariable(VOTING_RESOURCE) String votingResource,
-                                        @RequestHeader("Admin-Key") String adminKey) {
-        votingService.changeVotingOpenOrClosed(votingResource, true);
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping(path = "/{"+VOTING_RESOURCE+"}/admin/closevoting", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> closeVoting(@PathVariable(VOTING_RESOURCE) String votingResource,
-                                        @RequestHeader("Admin-Key") String adminKey) {
-        votingService.changeVotingOpenOrClosed(votingResource, false);
-        return ResponseEntity.ok().build();
-    }
-
-//    private ResponseEntity<?> changeVotingForResource(String resourceName, String adminKey, boolean openVoting) {
-//        if ( !isAdminRequestOk(adminKey)) {
-//            return ResponseEntity.status(403).body(new ErrorDto("access_denied", "nope"));
-//        }
-//        votingService.changeVotingOpenOrClosed(resourceName, openVoting);
-//        return ResponseEntity.ok().build();
-//    }
-
-//    private boolean isAdminRequestOk(String adminKey) {
-//        return StringUtils.equalsIgnoreCase(adminKey, this.adminKey);
-//    }
 
     @GetMapping(path = "/{"+VOTING_RESOURCE+"}/votes", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getUserVotes(@PathVariable(VOTING_RESOURCE) String votingResource, OktaUser oktaUser) {
