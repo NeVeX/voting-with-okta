@@ -4,6 +4,8 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * Created by Mark Cunningham on 11/12/2017.
  */
@@ -17,6 +19,10 @@ public class VotingWithOktaProperties {
     private String keystoreResource;
     @NotBlank
     private String adminKey;
+    @NotBlank
+    private String protocol;
+    @NotNull
+    private Boolean addTestData;
 
     public String getAdminKey() {
         return adminKey;
@@ -40,5 +46,21 @@ public class VotingWithOktaProperties {
 
     public void setSamlHostname(String samlHostname) {
         this.samlHostname = samlHostname;
+    }
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
+
+    public Boolean getAddTestData() {
+        return addTestData;
+    }
+
+    public void setAddTestData(Boolean addTestData) {
+        this.addTestData = addTestData;
     }
 }

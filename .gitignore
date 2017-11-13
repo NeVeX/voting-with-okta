@@ -8,3 +8,4 @@ src/main/resources/saml/
 classes/
 src/main/resources/application-sensitive.yml
 database/
+Voting_Info.json

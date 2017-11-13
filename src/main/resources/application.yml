@@ -1,14 +1,19 @@
 voting-with-okta:
-  saml-hostname: localhost
+  saml-hostname: localhost:${server.port}
   keystore-resource: saml/keystore.jks
   admin-key: boston
+  protocol: https
+  add-test-data: false
 
 security:
   basic:
     enabled: false
   filter-order: 5
   saml2:
-    metadata-url: https://dev-309873.oktapreview.com/app/exkcujynn6dhbolHb0h7/sso/saml/metadata
+#    metadata-url: https://dev-309873.oktapreview.com/app/exkcujynn6dhbolHb0h7/sso/saml/metadata
+    metadata-url: https://dev-309873.oktapreview.com/app/exkcurhhvaLJwRbrb0h7/sso/saml/metadata # local server
+#    metadata-url: https://prosper.okta.com/app/prospermarketplaceinc_uxhackathonvoting_2/exk1d5me3qf31Fb6t1d8/sso/saml
+#    metadata-url: https://prosper.okta.com/app/exk1d5me3qf31Fb6t1d8/sso/saml/metadata
 
 server:
   context-path: /voting

@@ -1,6 +1,7 @@
 package com.nevex.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nevex.config.property.VotingWithOktaProperties;
 import com.nevex.dao.VoteRepository;
 import com.nevex.dao.VotingInstanceInformationRepository;
 import com.nevex.dao.VotingInstancesRepository;
@@ -23,10 +24,12 @@ public class VotingConfiguration {
     private VoteRepository voteRepository;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private VotingWithOktaProperties votingWithOktaProperties;
 
     @Bean
     VotingService votingService() {
-        return new VotingService(votingInstancesRepository, votingInstanceInformationRepository, voteRepository, objectMapper);
+        return new VotingService(votingInstancesRepository, votingInstanceInformationRepository, voteRepository, objectMapper, votingWithOktaProperties.getAddTestData());
     }
 
 }

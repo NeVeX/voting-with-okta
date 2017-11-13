@@ -1,0 +1,55 @@
+<!doctype html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"></meta>
+
+    <title>Vote Selection</title>
+    <meta charset="utf-8" ></meta>
+    <meta name="viewport" content="width=device-width, initial-scale=1" ></meta>
+    <!--[if lte IE 8]><script th:src="@{assets/js/ie/html5shiv.js}" src="assets/js/ie/html5shiv.js"></script><![endif]-->
+    <link rel="stylesheet" th:href="@{/assets/css/home-main.css}" href="assets/css/home-main.css" />
+    <!--[if lte IE 8]><link rel="stylesheet" th:href="@{/assets/css/home-ie8.css}" href="assets/css/home-ie8.css" /><![endif]-->
+    <!--[if lte IE 9]><link rel="stylesheet" th:href="@{/assets/css/home-ie9.css}" href="assets/css/home-ie9.css" /><![endif]-->
+
+    <meta name="author" content="Mark Cunningham"></meta>
+</head>
+
+<body class="wrapper" style="background: #303030;">
+
+<div class="wrapper style4" >
+    <article id="contact" >
+        <div>
+            <div class="row">
+                <div class="12u">
+                    <div>
+                        <div class="row 200%">
+                            <div class="12u">
+                                <ul class="actions">
+                                    <li><button onclick="window.location.href = 'results/grandprize'">Grand Prize</button></li>
+                                    <li><button onclick="window.location.href = 'results/mostcreative'">Most Creative</button></li>
+                                    <li><button onclick="window.location.href = 'results/mostimpactful'">Most Impactful</button></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </article>
+</div>
+
+<!-- Scripts -->
+<script th:src="@{/assets/js/jquery.min.js}" src="assets/js/jquery.min.js"></script>
+<script th:src="@{/assets/js/jquery.scrolly.min.js}" src="assets/js/jquery.scrolly.min.js"></script>
+<script th:src="@{/assets/js/skel.min.js}" src="assets/js/skel.min.js"></script>
+<script th:src="@{/assets/js/skel-viewport.min.js}" src="assets/js/skel-viewport.min.js"></script>
+<script th:src="@{/assets/js/util.js}" src="assets/js/util.js"></script>
+<!--[if lte IE 8]><script th:src="@{/assets/js/ie/respond.min.js}" src="assets/js/ie/respond.min.js"></script><![endif]-->
+<script th:src="@{/assets/js/main.js}" src="assets/js/main.js"></script>
+<script th:src="@{/js/admin_voting.js}" src="js/admin_voting.js"></script>
+
+</body>
+
+</html>

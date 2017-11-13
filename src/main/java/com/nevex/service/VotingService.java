@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -45,12 +46,13 @@ public class VotingService {
     public VotingService(VotingInstancesRepository votingInstancesRepository,
                          VotingInstanceInformationRepository votingInstanceInformationRepository,
                          VoteRepository voteRepository,
-                         ObjectMapper objectMapper) {
+                         ObjectMapper objectMapper,
+                        boolean addTestData) {
         this.votingInstancesRepository = votingInstancesRepository;
         this.votingInstanceInformationRepository = votingInstanceInformationRepository;
         this.voteRepository = voteRepository;
         this.objectMapper = objectMapper;
-        createTestData();
+        createTestData(addTestData);
     }
 
     public Optional<VotingResultsDto> getScores(String votingResourceName) {
@@ -89,7 +91,11 @@ public class VotingService {
     }
 
     private String getTeamName(Integer teamId, List<VotingInstanceInformationEntity> allTeams) {
-        return allTeams.stream().filter( ent -> ent.getId() == teamId).findFirst().get().getTeamName();
+        Optional<VotingInstanceInformationEntity> teamOpt = allTeams.stream().filter( ent -> ent.getId() == teamId).findFirst();
+        if ( teamOpt.isPresent()) {
+            return teamOpt.get().getTeamName();
+        }
+        return "Unknown";
     }
 
     private void incrementForTeam(Integer id, Map<Integer, Integer> map) {
@@ -164,7 +170,7 @@ public class VotingService {
         }
         vote.updateVote(teamId, voteRequest);
         voteRepository.save(vote);
-        LOGGER.info("Save vote for [{}]", userName);
+        LOGGER.info("Saved vote for [{}]", userName);
         return true;
     }
 
@@ -219,10 +225,11 @@ public class VotingService {
         }
     }
 
-    private void createTestData() {
+    private void createTestData(boolean addTestData) {
 
         String resourceName = "ux-hackathon";
         VotingInstanceEntity votingInstanceEntity = votingInstancesRepository.save(new VotingInstanceEntity("UX Hackathon Voting", resourceName, false));
+        if (!addTestData) { return; }
 
         Set<PersonDto> teamMembers = new HashSet<>();
         teamMembers.add(new PersonDto("John Doe", "john@prosper.com"));
@@ -248,21 +255,21 @@ public class VotingService {
 
         testTeams.forEach(t -> votingInstanceInformationRepository.save(t));
 
+        changeVotingOpenOrClosed(resourceName, true);
 
-        placeVote(resourceName, 1, "marko", new VoteRequestDto(true, true, false));
-        placeVote(resourceName, 1, "1markwo", new VoteRequestDto(true, true, false));
-        placeVote(resourceName, 1, "2mareko", new VoteRequestDto(true, true, false));
-        placeVote(resourceName, 2, "3mar4dko", new VoteRequestDto(true, true, false));
-        placeVote(resourceName, 2, "4m4ardko", new VoteRequestDto(true, true, false));
-        placeVote(resourceName, 2, "5mar4tko", new VoteRequestDto(false, false, false));
-        placeVote(resourceName, 3, "6mart4fko", new VoteRequestDto(false, false, false));
-        placeVote(resourceName, 3, "7mareko", new VoteRequestDto(false, false, false));
-        placeVote(resourceName, 3, "8ma3reko", new VoteRequestDto(false, false, false));
-        placeVote(resourceName, 3, "1ma2reko", new VoteRequestDto(false, true, true));
-        placeVote(resourceName, 3, "2mar3eako", new VoteRequestDto(true, true, true));
-        placeVote(resourceName, 3, "4m2areko", new VoteRequestDto(true, true, true));
-        placeVote(resourceName, 3, "5mar3eko", new VoteRequestDto(true, true, false));
+        Random random = new Random();
+        for ( int i = 1; i < 3000; i++) {
 
+            boolean grandPrize = random.nextInt(2) == 0;
+            boolean mostCreative = random.nextInt(2) == 0;
+            boolean mostImpactful = random.nextInt(2) == 0;
+            int teamId = random.nextInt(20);
+
+            placeVote(resourceName, teamId, "user-"+i, new VoteRequestDto(grandPrize, mostCreative, mostImpactful));
+        }
+
+        changeVotingOpenOrClosed(resourceName, false);
+        LOGGER.warn("\n\n\n\nAdded test data!!\n\n\n");
     }
 
     @Transactional

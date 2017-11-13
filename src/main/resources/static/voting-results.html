@@ -3,37 +3,76 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8"></meta>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"></meta>
+    <meta name="description" content="UX Hackathon Voting"></meta>
+    <meta name="author" content="Mark Cunningham"></meta>
+    <meta th:name="_csrf" th:content="${_csrf.token}"/>
+    <meta th:name="voting_results" th:content="${results}"/>
+    <meta th:name="results_size" th:content="${results_size}"/>
+    <!--<meta th:name="_csrf_header" th:content="${_csrf.headerName}"/>-->
+    <title>Results</title>
 
-    <title>Voting Admin</title>
-    <meta charset="utf-8" ></meta>
-    <meta name="viewport" content="width=device-width, initial-scale=1" ></meta>
     <!--[if lte IE 8]><script th:src="@{assets/js/ie/html5shiv.js}" src="assets/js/ie/html5shiv.js"></script><![endif]-->
-    <link rel="stylesheet" th:href="@{/assets/css/home-main.css}" href="assets/css/home-main.css" />
+    <link rel="stylesheet" th:href="@{/assets/css/voting-main.css}" href="assets/css/voting-main.css" />
     <!--[if lte IE 8]><link rel="stylesheet" th:href="@{/assets/css/home-ie8.css}" href="assets/css/home-ie8.css" /><![endif]-->
     <!--[if lte IE 9]><link rel="stylesheet" th:href="@{/assets/css/home-ie9.css}" href="assets/css/home-ie9.css" /><![endif]-->
-    <meta th:name="_csrf" th:content="${_csrf.token}"/>
-    <meta name="author" content="Mark Cunningham"></meta>
 </head>
 
-<body class="wrapper" style="background: #303030;">
+<body>
 
-<div class="wrapper style4" >
-    <article id="contact" >
-        <header>
-            <h2>Admin options:</h2>
-        </header>
-    </article>
+<!-- Wrapper -->
+<div id="wrapper">
+
+    <!-- Header -->
+    <header id="header" >
+        <h1>
+            <strong th:text="${header_title}"></strong>
+        </h1>
+    </header>
+
+    <!-- Main -->
+    <div id="main">
+
+        <div th:each="teamInfo, iterStat : ${results}"
+             class="thumb" style="color: #ffffff; display: inline-grid">
+
+            <a th:if="${iterStat.first}"
+                    th:href="@{/images/fulls/8.jpg}" href="images/fulls/8.jpg" class="image">
+                <img th:src="@{/images/thumbs/8.jpg}" src="images/thumbs/8.jpg" alt=""/>
+            </a>
+            <a th:unless="${iterStat.first}"
+               th:href="@{/images/fulls/5.jpg}" href="images/fulls/5.jpg" class="image">
+                <img th:src="@{/images/thumbs/5.jpg}" src="images/thumbs/5.jpg" alt=""/>
+            </a>
+            <div style="padding: 2%; display: flex; flex-direction: column; text-align: center; align-self: center">
+                <h1 style="overflow: hidden; text-align: center; word-wrap: break-word;"
+                    data-th-attr="data-teamName=${teamInfo.teamName}"
+                    th:id="'team-name-' + ${iterStat.index}"></h1>
+                <h1 style="overflow: hidden; word-wrap: break-word; text-align: center; font-style: italic"
+                    data-th-attr="data-teamVotes=${teamInfo.votes}"
+                    th:id="'team-votes-' + ${iterStat.index}"></h1>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer id="footer" class="panel nevex-panel">
+
+    </footer>
+
 </div>
 
 <!-- Scripts -->
 <script th:src="@{/assets/js/jquery.min.js}" src="assets/js/jquery.min.js"></script>
-<script th:src="@{/assets/js/jquery.scrolly.min.js}" src="assets/js/jquery.scrolly.min.js"></script>
+<script th:src="@{/assets/js/jquery.poptrox.min.js}" src="assets/js/jquery.poptrox.min.js"></script>
 <script th:src="@{/assets/js/skel.min.js}" src="assets/js/skel.min.js"></script>
-<script th:src="@{/assets/js/skel-viewport.min.js}" src="assets/js/skel-viewport.min.js"></script>
 <script th:src="@{/assets/js/util.js}" src="assets/js/util.js"></script>
 <!--[if lte IE 8]><script th:src="@{/assets/js/ie/respond.min.js}" src="assets/js/ie/respond.min.js"></script><![endif]-->
-<script th:src="@{/assets/js/main.js}" src="assets/js/main.js"></script>
-<script th:src="@{/js/admin_voting.js}" src="js/admin_voting.js"></script>
+<script th:src="@{/js/nevex_voting_results.js}" type="text/javascript" src="js/nevex_voting_results.js"></script>
+
+<script th:src="@{/assets/js/main.js}"  src="assets/js/main.js"></script>
 
 </body>
 
