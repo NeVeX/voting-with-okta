@@ -27,13 +27,13 @@ public class VotingInstanceInformationEntity implements Serializable {
     @Column(name = "team_name")
     private String teamName;
     @Basic
-    @Column(name = "short_description")
+    @Column(name = "short_description", length = 1000)
     private String shortDescription;
     @Basic
-    @Column(name = "long_description")
+    @Column(name = "long_description", length = 2000)
     private String longDescription;
     @Basic
-    @Column(name = "teamMembers")
+    @Column(name = "teamMembers", length = 2000)
     private String teamMembers; // TODO: don't save as JSON FFS
 
     public VotingInstanceInformationEntity() {

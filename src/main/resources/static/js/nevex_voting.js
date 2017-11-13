@@ -43,12 +43,14 @@ function getHeadersForApiPostCall() {
 }
 
 function showYouVotedBanner(teamId) {
-    var teamVotedBannerId = "#thanks-for-voting-"+teamId;
-    $(teamVotedBannerId).fadeIn(600);
-
-    setInterval(function () {
-        $(teamVotedBannerId).fadeOut(1000);
-    }, 5000);
+    var thanksForVotingText = "#thanks-for-voting-text";
+    $(thanksForVotingText).html("Thanks for voting!");
+    $(thanksForVotingText).show();
+    // $(thanksForVotingText).fadeIn(600);
+    //
+    // setInterval(function () {
+    //     $(thanksForVotingText).fadeOut(1000);
+    // }, 5000);
 }
 
 function updateUserVotes(userVotes) {
@@ -61,6 +63,26 @@ function updateUserVotes(userVotes) {
     }
     if ( userVotes.most_impactful_team_name) {
         $("#user-vote-most-impactful").text(userVotes.most_impactful_team_name);
+    }
+
+    // update the buttons too
+    var allVoteButtons = $('input[id^="vote-button-"]');
+    if ( allVoteButtons && allVoteButtons.length > 0) {
+        for ( var index = 0; index < allVoteButtons.length; index++) {
+            var button = $(allVoteButtons[index]);
+            var teamId = button.attr('data-teamId');
+            var voteType = button.attr('data-vote-type');
+            button.prop("disabled", false);
+            if ( userVotes.grand_prize_team_id && teamId == userVotes.grand_prize_team_id && voteType == 'grand_prize') {
+                button.prop("disabled", true);
+            }
+            if ( userVotes.most_creative_team_id && teamId == userVotes.most_creative_team_id && voteType == 'most_creative') {
+                button.prop("disabled", true);
+            }
+            if ( userVotes.most_impactful_team_id && teamId == userVotes.most_impactful_team_id && voteType == 'most_impactful') {
+                button.prop("disabled", true);
+            }
+        }
     }
 }
 
@@ -80,6 +102,10 @@ function getAndUpdateUsersVotes(resourceName) {
 }
 
 $( document ).ready(function() {
+    findAndUpdateUsersVotes();
+});
+
+function findAndUpdateUsersVotes() {
     var resourceName = $("meta[name='_votingResourceName']").attr("content");
     getAndUpdateUsersVotes(resourceName);
-});
+}

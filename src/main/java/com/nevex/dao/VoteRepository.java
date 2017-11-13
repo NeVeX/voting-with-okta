@@ -5,6 +5,7 @@ import com.nevex.dao.entity.VotingInstanceInformationEntity;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -14,4 +15,6 @@ import java.util.Optional;
 public interface VoteRepository extends CrudRepository<VoteEntity, Integer> {
 
     Optional<VoteEntity> findOneByVotingIdAndUsername(int votingId, String username);
+
+    List<VoteEntity> findAllByVotingId(int votingId);
 }

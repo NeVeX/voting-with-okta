@@ -79,6 +79,19 @@ public class ViewController {
         return new ModelAndView("error");
     }
 
+    @GetMapping(path = "/{"+VOTING_RESOURCE+"}/results")
+    public ModelAndView getResults(@PathVariable(VOTING_RESOURCE) String votingResourceName,
+                                           OktaUser oktaUser) throws Exception {
+        if (!isAdminUser(oktaUser)) {
+            return new ModelAndView("error");
+        }
+        if (votingService.doesVotingResourceNameExist(votingResourceName)) {
+            ModelAndView modelAndView = new ModelAndView("voting-results");
+            return modelAndView;
+        }
+        return new ModelAndView("error");
+    }
+
     private boolean isAdminUser(OktaUser oktaUser) {
         return StringUtils.containsIgnoreCase(oktaUser.getUsername(), "mcunningham");
     }

@@ -5,6 +5,7 @@ import com.nevex.model.OktaUser;
 import com.nevex.model.UserVoteResponseDto;
 import com.nevex.model.VoteRequestDto;
 import com.nevex.model.VotingInformationRequestDto;
+import com.nevex.model.VotingResultsDto;
 import com.nevex.service.VotingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -36,6 +37,15 @@ public class VotingAdminController {
                                  VotingWithOktaProperties properties) {
         this.votingService = votingService;
         this.adminKey = properties.getAdminKey();
+    }
+
+    @GetMapping(path = "/{"+VOTING_RESOURCE+"}/results", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getResults(@PathVariable(VOTING_RESOURCE) String votingResource) {
+        Optional<VotingResultsDto> resultsDtoOpt = votingService.getScores(votingResource);
+        if (resultsDtoOpt.isPresent()) {
+            return ResponseEntity.ok(resultsDtoOpt.get());
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @PostMapping(path = "/{"+VOTING_RESOURCE+"}/admin/openvoting", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

@@ -71,7 +71,7 @@ public class VotingApiController {
         } else {
 //            return ResponseEntity.notFound().build();
             // Instead of 404 (even though it should be, let's default to an empty object since I'm running out of time building this)
-            return ResponseEntity.ok(new UserVoteResponseDto(username, null, null, null));
+            return ResponseEntity.ok(new UserVoteResponseDto(username, null, null, null, null, null, null));
         }
     }
 

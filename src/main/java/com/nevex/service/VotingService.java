@@ -14,13 +14,18 @@ import com.nevex.model.VoteRequestDto;
 import com.nevex.model.VotingInformationRequestDto;
 import com.nevex.model.VotingInformationResponseDto;
 import com.nevex.model.VotingInstancesDto;
+import com.nevex.model.VotingResultsDto;
+import com.nevex.model.VotingTeamResultsDto;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -48,13 +53,52 @@ public class VotingService {
         createTestData();
     }
 
-//    public void openVoting(String votingResourceName) {
-//        changeVotingOpenOrClosed(votingResourceName, true);
-//    }
-//
-//    public void closeVoting(String votingResourceName) {
-//        changeVotingOpenOrClosed(votingResourceName, false);
-//    }
+    public Optional<VotingResultsDto> getScores(String votingResourceName) {
+        Optional<VotingInstanceEntity> votingInstanceOpt = getVotingInstanceForResourceName(votingResourceName);
+        if ( !votingInstanceOpt.isPresent()) { return Optional.empty(); }
+
+        VotingInstanceEntity votingInstance = votingInstanceOpt.get();
+
+        List<VotingInstanceInformationEntity> allTeams = votingInstanceInformationRepository.findAllByVotingId(votingInstance.getId());
+        List<VoteEntity> allVotes = voteRepository.findAllByVotingId(votingInstance.getId());
+
+        if ( allTeams == null || allTeams.isEmpty() ) { return Optional.empty(); }
+        if ( allVotes == null || allVotes.isEmpty() ) { return Optional.empty(); }
+
+        Map<Integer, Integer> teamIdToGrandPrizeVotes = new HashMap<>();
+        Map<Integer, Integer> teamIdToMostImpactfulVotes = new HashMap<>();
+        Map<Integer, Integer> teamIdToMostCreativeVotes = new HashMap<>();
+
+        for ( VoteEntity vote : allVotes) {
+            if ( vote.getGrandPrize() != null ) {
+                incrementForTeam(vote.getGrandPrize(), teamIdToGrandPrizeVotes);
+            }
+            if ( vote.getMostImpactful() != null) {
+                incrementForTeam(vote.getMostImpactful(), teamIdToMostImpactfulVotes);
+            }
+            if ( vote.getMostCreative() != null) {
+                incrementForTeam(vote.getMostCreative(), teamIdToMostCreativeVotes);
+            }
+        }
+
+        List<VotingTeamResultsDto> grandPrizeTeamResults = teamIdToGrandPrizeVotes.entrySet().stream().map(e -> new VotingTeamResultsDto(e.getKey(), getTeamName(e.getKey(), allTeams), e.getValue())).collect(Collectors.toList());
+        List<VotingTeamResultsDto> mostImpactfulTeamResults = teamIdToMostImpactfulVotes.entrySet().stream().map(e -> new VotingTeamResultsDto(e.getKey(), getTeamName(e.getKey(), allTeams), e.getValue())).collect(Collectors.toList());
+        List<VotingTeamResultsDto> mostCreativeTeamResults = teamIdToMostCreativeVotes.entrySet().stream().map(e -> new VotingTeamResultsDto(e.getKey(), getTeamName(e.getKey(), allTeams), e.getValue())).collect(Collectors.toList());
+
+        return Optional.of(new VotingResultsDto(votingResourceName, grandPrizeTeamResults, mostImpactfulTeamResults, mostCreativeTeamResults));
+    }
+
+    private String getTeamName(Integer teamId, List<VotingInstanceInformationEntity> allTeams) {
+        return allTeams.stream().filter( ent -> ent.getId() == teamId).findFirst().get().getTeamName();
+    }
+
+    private void incrementForTeam(Integer id, Map<Integer, Integer> map) {
+        int valueToGive = 1;
+        if ( map.containsKey(id) ) {
+            valueToGive = map.get(id) + 1;
+        }
+        map.put(id, valueToGive);
+    }
 
     public void changeVotingOpenOrClosed(String votingResourceName, boolean votingIsOpen) {
         Optional<VotingInstanceEntity> votingInstanceOpt = getVotingInstanceForResourceName(votingResourceName);
@@ -80,7 +124,11 @@ public class VotingService {
                 username,
                 grandPrizeOpt.isPresent() ? grandPrizeOpt.get().getTeamName() : null,
                 mostCreativeOpt.isPresent() ? mostCreativeOpt.get().getTeamName() : null,
-                mostImpactfulOpt.isPresent() ? mostImpactfulOpt.get().getTeamName() : null
+                mostImpactfulOpt.isPresent() ? mostImpactfulOpt.get().getTeamName() : null,
+
+                grandPrizeOpt.isPresent() ? grandPrizeOpt.get().getTeamId() : null,
+                mostCreativeOpt.isPresent() ? mostCreativeOpt.get().getTeamId() : null,
+                mostImpactfulOpt.isPresent() ? mostImpactfulOpt.get().getTeamId() : null
         );
         return Optional.of(userVote);
     }
@@ -173,7 +221,8 @@ public class VotingService {
 
     private void createTestData() {
 
-        VotingInstanceEntity votingInstanceEntity = votingInstancesRepository.save(new VotingInstanceEntity("UX Hackathon Voting", "ux-hackathon", false));
+        String resourceName = "ux-hackathon";
+        VotingInstanceEntity votingInstanceEntity = votingInstancesRepository.save(new VotingInstanceEntity("UX Hackathon Voting", resourceName, false));
 
         Set<PersonDto> teamMembers = new HashSet<>();
         teamMembers.add(new PersonDto("John Doe", "john@prosper.com"));
@@ -198,6 +247,22 @@ public class VotingService {
                 .collect(Collectors.toSet());
 
         testTeams.forEach(t -> votingInstanceInformationRepository.save(t));
+
+
+        placeVote(resourceName, 1, "marko", new VoteRequestDto(true, true, false));
+        placeVote(resourceName, 1, "1markwo", new VoteRequestDto(true, true, false));
+        placeVote(resourceName, 1, "2mareko", new VoteRequestDto(true, true, false));
+        placeVote(resourceName, 2, "3mar4dko", new VoteRequestDto(true, true, false));
+        placeVote(resourceName, 2, "4m4ardko", new VoteRequestDto(true, true, false));
+        placeVote(resourceName, 2, "5mar4tko", new VoteRequestDto(false, false, false));
+        placeVote(resourceName, 3, "6mart4fko", new VoteRequestDto(false, false, false));
+        placeVote(resourceName, 3, "7mareko", new VoteRequestDto(false, false, false));
+        placeVote(resourceName, 3, "8ma3reko", new VoteRequestDto(false, false, false));
+        placeVote(resourceName, 3, "1ma2reko", new VoteRequestDto(false, true, true));
+        placeVote(resourceName, 3, "2mar3eako", new VoteRequestDto(true, true, true));
+        placeVote(resourceName, 3, "4m2areko", new VoteRequestDto(true, true, true));
+        placeVote(resourceName, 3, "5mar3eko", new VoteRequestDto(true, true, false));
+
     }
 
     @Transactional
