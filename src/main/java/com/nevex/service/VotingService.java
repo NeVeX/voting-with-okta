@@ -11,13 +11,16 @@ import com.nevex.dao.entity.VotingInstanceInformationEntity;
 import com.nevex.model.PersonDto;
 import com.nevex.model.UserVoteResponseDto;
 import com.nevex.model.VoteRequestDto;
+import com.nevex.model.VotingInformationRequestDto;
 import com.nevex.model.VotingInformationResponseDto;
 import com.nevex.model.VotingInstancesDto;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -91,17 +94,18 @@ public class VotingService {
         return Optional.ofNullable(createVotingInfoResponse(teamInfo, votingResourceName));
     }
 
-    public void placeVote(String votingResource, int teamId, String userName, VoteRequestDto voteRequest) {
+    public boolean placeVote(String votingResource, int teamId, String userName, VoteRequestDto voteRequest) {
+
         Optional<VotingInstanceEntity> votingInstanceOpt = getVotingInstanceForResourceName(votingResource);
 
-        if ( !votingInstanceOpt.isPresent()) { return; }
+        if ( !votingInstanceOpt.isPresent()) { return false; }
 
         VotingInstanceEntity votingInstanceEntity = votingInstanceOpt.get();
-
+        if ( !votingInstanceEntity.getOpenForVoting() ) { return false; } // voting not open
         Optional<VotingInstanceInformationEntity> votingInstanceTeamOpt =
                 votingInstanceInformationRepository.findOneByIdAndVotingId(teamId, votingInstanceEntity.getId());
 
-        if ( !votingInstanceTeamOpt.isPresent()) { return; }
+        if ( !votingInstanceTeamOpt.isPresent()) { return false; }
 
         Optional<VoteEntity> voteEntityOpt = voteRepository.findOneByVotingIdAndUsername(votingInstanceEntity.getId(), userName);
         VoteEntity vote;
@@ -113,7 +117,11 @@ public class VotingService {
         vote.updateVote(teamId, voteRequest);
         voteRepository.save(vote);
         LOGGER.info("Save vote for [{}]", userName);
+        return true;
+    }
 
+    public boolean doesVotingResourceExistAndIsOpenForVotes(String votingResourceName) {
+        return doesVotingResourceNameExist(votingResourceName) && isVotingOpenForVotingResource(votingResourceName);
     }
 
     public boolean doesVotingResourceNameExist(String resourceName) {
@@ -192,5 +200,30 @@ public class VotingService {
         testTeams.forEach(t -> votingInstanceInformationRepository.save(t));
     }
 
+    @Transactional
+    public boolean setVotingInformation(String votingResource, List<VotingInformationRequestDto> votingInformation) throws Exception {
+        Optional<VotingInstanceEntity> votingInstanceEntityOpt = getVotingInstanceForResourceName(votingResource);
+        if ( !votingInstanceEntityOpt.isPresent()) {
+            return false;
+        }
+        VotingInstanceEntity votingInstanceEntity = votingInstanceEntityOpt.get();
+
+        Set<VotingInstanceInformationEntity> votingInfosToSave = new HashSet<>();
+        for ( VotingInformationRequestDto newInfo : votingInformation) {
+            votingInfosToSave.add(new VotingInstanceInformationEntity(
+                    votingInstanceEntity.getId(),
+                    newInfo.getTeamName(),
+                    newInfo.getShortDescription(),
+                    newInfo.getLongDescription(),
+                    objectMapper.writeValueAsString(newInfo.getTeamMembers())
+            ));
+        }
+
+        // delete anything we already have
+        votingInstanceInformationRepository.deleteAllByVotingId(votingInstanceEntity.getId());
+
+        votingInfosToSave.forEach(ent -> votingInstanceInformationRepository.save(ent));
+        return true;
+    }
 }
 

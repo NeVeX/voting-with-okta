@@ -52,7 +52,10 @@ public class VotingApiController {
             @PathVariable(TEAM_ID) Integer teamId,
             @RequestBody VoteRequestDto voteRequestDto,
             OktaUser oktaUser) {
-            votingService.placeVote(votingResource, teamId, oktaUser.getUsername(), voteRequestDto);
+            boolean isVotePlaced = votingService.placeVote(votingResource, teamId, oktaUser.getUsername(), voteRequestDto);
+            if (!isVotePlaced ) {
+                return ResponseEntity.badRequest().body(new ErrorDto("vote_not_placed", "Could not place vote - is the voting over?"));
+            }
         return getUserVotes(votingResource, oktaUser.getUsername()); // get the current vote for the user
     }
 

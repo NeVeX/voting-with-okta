@@ -4,6 +4,7 @@ import com.nevex.config.property.VotingWithOktaProperties;
 import com.nevex.model.OktaUser;
 import com.nevex.model.UserVoteResponseDto;
 import com.nevex.model.VoteRequestDto;
+import com.nevex.model.VotingInformationRequestDto;
 import com.nevex.service.VotingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -47,6 +49,18 @@ public class VotingAdminController {
         votingService.changeVotingOpenOrClosed(votingResource, false);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping(path = "/{"+VOTING_RESOURCE+"}/admin/info", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> setVotingInfo(@PathVariable(VOTING_RESOURCE) String votingResource,
+                                           @RequestBody List<VotingInformationRequestDto> votingInformation) throws Exception {
+
+        boolean didSave = votingService.setVotingInformation(votingResource, votingInformation);
+        if ( didSave) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
 
 //    private ResponseEntity<?> changeVotingForResource(String resourceName, String adminKey, boolean openVoting) {
 //        if ( !isAdminRequestOk(adminKey)) {

@@ -36,10 +36,18 @@
                                         <button onclick="closeVoting()">Close Voting</button>
                                     </li>
                                 </ul>
+                                <div>
+                                    <h3>Enter the JSON for this voting instance</h3>
+                                    <textarea th:text="${example_json_data}"
+                                              style="min-width: 50%; min-height: 20em; margin-top: 3em"
+                                              id="voting-data-entry">Enter all the JSON in here</textarea>
+                                    <button onclick="uploadVotingData()">Upload data</button>
+                                </div>
+
                             </div>
                         </div>
-                    </div>
 
+                    </div>
                 </div>
             </div>
         </div>

@@ -20,9 +20,6 @@ public class VotingInformationRequestDto {
     final String TEAM_MEMBERS = "team_members";
 
     @NotBlank
-    @JsonProperty(VOTING_RESOURCE)
-    private final String votingResource;
-    @NotBlank
     @Max(value = 30)
     @JsonProperty(TEAM_NAME)
     private final String teamName;
@@ -40,20 +37,15 @@ public class VotingInformationRequestDto {
 
     @JsonCreator
     public VotingInformationRequestDto(
-            @JsonProperty(value = VOTING_RESOURCE, required = true) String votingResource,
             @JsonProperty(value = TEAM_NAME, required = true) String teamName,
             @JsonProperty(value = SHORT_DESCRIPTION, required = true) String shortDescription,
             @JsonProperty(value = LONG_DESCRIPTION, required = true) String longDescription,
             @JsonProperty(value = TEAM_MEMBERS, required = true) Set<PersonDto> teamMembers) {
-        this.votingResource = votingResource;
+
         this.teamName = teamName;
         this.shortDescription = shortDescription;
         this.longDescription = longDescription;
         this.teamMembers = teamMembers;
-    }
-
-    public String getVotingResource() {
-        return votingResource;
     }
 
     public String getTeamName() {

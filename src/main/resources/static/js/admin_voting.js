@@ -24,6 +24,24 @@ function openOrCloseVoting(votingChange) {
     });
 }
 
+function uploadVotingData() {
+    var jsonText = $("#voting-data-entry").val();
+    $.ajax({
+        type: "POST",
+        url: "admin/info",
+        headers: getHeadersForApiPostCall(),
+        data: jsonText,
+        success: function(data) {
+            console.log("Successfully updated voting data");
+            alert("Successfully updated voting data");
+        },
+        error: function(error) {
+            console.log("Error: "+ JSON.stringify(error));
+            alert("Hmm, there was an error");
+        }
+    });
+}
+
 function getHeadersForApiPostCall() {
     var csrfToken = $("meta[name='_csrf']").attr("content");
     // var csrfHeader = $("meta[name='_csrf_header']").attr("content");
